@@ -79,7 +79,7 @@ class Clash
             return $group['proxies'];
         });
         $config['proxy-groups'] = array_values($config['proxy-groups']);
-        
+
         $config = $this->buildRules($config);
 
 
@@ -99,7 +99,8 @@ class Clash
     {
         // Force the current subscription domain to be a direct rule
         $subsDomain = request()->header('Host');
-        if ($subsDomain) {
+        // env setting CLASH_IGNORE_DIRECT_DOMAIN ignore subscription domain direct [true, false]
+        if ($subsDomain && !env('CLASH_IGNORE_DIRECT_DOMAIN', false)) {
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }
         // Force the nodes ip to be a direct rule

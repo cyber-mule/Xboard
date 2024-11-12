@@ -68,6 +68,20 @@ class SingBox
         }
         foreach ($outbounds as &$outbound) {
             if (in_array($outbound['type'], ['urltest', 'selector'])) {
+                // have filter rules tag
+                if (array_key_exists('filter', $outbound)) {
+                    $filters = $outbound['filter'];
+                    unset($outbound['filter']);// delete diy tag
+                    foreach (array_column($proxies, 'tag') as $nProxy) {
+                        foreach ($filters as $filter) {
+                            if (!str_contains($nProxy, $filter)) {
+                                $outbound['outbounds'][] = $nProxy;
+                            }
+                        }
+                    }
+
+                    continue;
+                }
                 array_push($outbound['outbounds'], ...array_column($proxies, 'tag'));
             }
         }

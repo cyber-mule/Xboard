@@ -90,7 +90,8 @@ class Stash
         $config['proxy-groups'] = array_values($config['proxy-groups']);
         // Force the current subscription domain to be a direct rule
         $subsDomain = request()->header('Host');
-        if ($subsDomain) {
+        // env setting STASH_IGNORE_DIRECT_DOMAIN ignore subscription domain direct [true, false]
+        if ($subsDomain && !env('STASH_IGNORE_DIRECT_DOMAIN', false)) {
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }
 

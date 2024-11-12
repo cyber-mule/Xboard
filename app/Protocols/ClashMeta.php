@@ -98,7 +98,8 @@ class ClashMeta
     {
         // Force the current subscription domain to be a direct rule
         $subsDomain = request()->header('Host');
-        if ($subsDomain) {
+        // env setting CLASH_IGNORE_DIRECT_DOMAIN ignore subscription domain direct [true, false]
+        if ($subsDomain && !env('CLASH_IGNORE_DIRECT_DOMAIN', false)) {
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }
         // Force the nodes ip to be a direct rule
@@ -302,7 +303,7 @@ class ClashMeta
         $array['down'] = $user->speed_limit ? min($server['down_mbps'], $user->speed_limit) : $server['down_mbps'];
         $array['skip-cert-verify'] = $server['insecure'] ? true : false;
         switch($server['version']){
-            case 1: 
+            case 1:
                 $array['type'] = 'hysteria';
                 // 判断是否开启动态端口
                 if(isset($server['ports'])) $array['ports'] = $server['ports'];
@@ -313,7 +314,7 @@ class ClashMeta
                 $array['disable_mtu_discovery'] = true; //禁止路径最大传输单元发现
                 $array['alpn'] = [ServerHysteria::$alpnMap[$server['alpn']]];
                 break;
-            case 2: 
+            case 2:
                 $array['type'] = 'hysteria2';
                 $array['password'] = $password;
                 if($server['is_obfs']) {
@@ -323,7 +324,7 @@ class ClashMeta
                 if(isset($server['ports'])) $array['ports'] = $server['ports'];
                 break;
         }
-        
+
         return $array;
     }
 
